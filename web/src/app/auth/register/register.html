@@ -1,0 +1,147 @@
+<div class="screen">
+  <div class="top">
+    <a class="ct-icon-btn" routerLink="/login" aria-label="Back to log in">
+      <svg
+        aria-hidden="true"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </a>
+  </div>
+
+  <div class="intro">
+    <h1 class="title">Start your<br /><em>crumbtrail</em></h1>
+    <p class="sub">Save recipes, log every batch, get better each time.</p>
+  </div>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (error(); as message) {
+      <div class="ct-alert" role="alert">{{ message }}</div>
+    }
+
+    <div class="names">
+      <div class="ct-field">
+        <label class="ct-label" for="rg-first">First name</label>
+        <input
+          class="ct-input"
+          id="rg-first"
+          type="text"
+          autocomplete="given-name"
+          maxlength="50"
+          formControlName="firstName"
+          [attr.aria-invalid]="!!fieldError('firstName')"
+          [attr.aria-describedby]="fieldError('firstName') ? 'rg-first-error' : null"
+        />
+        @if (fieldError('firstName'); as message) {
+          <div class="ct-hint ct-hint--error" id="rg-first-error">{{ message }}</div>
+        }
+      </div>
+      <div class="ct-field">
+        <label class="ct-label" for="rg-last">Last name</label>
+        <input
+          class="ct-input"
+          id="rg-last"
+          type="text"
+          autocomplete="family-name"
+          maxlength="50"
+          formControlName="lastName"
+          [attr.aria-invalid]="!!fieldError('lastName')"
+          [attr.aria-describedby]="fieldError('lastName') ? 'rg-last-error' : null"
+        />
+        @if (fieldError('lastName'); as message) {
+          <div class="ct-hint ct-hint--error" id="rg-last-error">{{ message }}</div>
+        }
+      </div>
+    </div>
+
+    <ct-pronoun-picker idPrefix="rg-pro" formControlName="pronouns" />
+
+    <div class="ct-field">
+      <label class="ct-label" for="rg-user">Username</label>
+      <div class="ct-handle">
+        <input
+          class="ct-input"
+          id="rg-user"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+          maxlength="30"
+          ctLowercase
+          formControlName="username"
+          aria-describedby="rg-user-hint"
+          [attr.aria-invalid]="!!fieldError('username')"
+        />
+      </div>
+      <div class="ct-hint" id="rg-user-hint" [class.ct-hint--error]="!!fieldError('username')">
+        {{ fieldError('username') ?? usernameHint }}
+      </div>
+    </div>
+
+    <div class="ct-field">
+      <label class="ct-label" for="rg-email">Email</label>
+      <input
+        class="ct-input"
+        id="rg-email"
+        type="email"
+        autocomplete="email"
+        autocapitalize="none"
+        spellcheck="false"
+        formControlName="email"
+        [attr.aria-invalid]="!!fieldError('email')"
+        [attr.aria-describedby]="fieldError('email') ? 'rg-email-error' : null"
+      />
+      @if (fieldError('email'); as message) {
+        <div class="ct-hint ct-hint--error" id="rg-email-error">{{ message }}</div>
+      }
+    </div>
+
+    <div class="ct-field">
+      <label class="ct-label" for="rg-pass">Password</label>
+      <input
+        class="ct-input"
+        id="rg-pass"
+        type="password"
+        autocomplete="new-password"
+        maxlength="128"
+        formControlName="password"
+        aria-describedby="rg-pass-hint"
+        [attr.aria-invalid]="!!fieldError('password')"
+      />
+      <div class="ct-hint" id="rg-pass-hint" [class.ct-hint--error]="!!fieldError('password')">
+        {{ fieldError('password') ?? 'At least 8 characters.' }}
+      </div>
+    </div>
+
+    <div class="ct-field">
+      <label class="ct-label" for="rg-pass-confirm">Confirm password</label>
+      <input
+        class="ct-input"
+        id="rg-pass-confirm"
+        type="password"
+        autocomplete="new-password"
+        maxlength="128"
+        formControlName="confirmPassword"
+        [attr.aria-invalid]="!!fieldError('confirmPassword')"
+        [attr.aria-describedby]="fieldError('confirmPassword') ? 'rg-pass-confirm-error' : null"
+      />
+      @if (fieldError('confirmPassword'); as message) {
+        <div class="ct-hint ct-hint--error" id="rg-pass-confirm-error">{{ message }}</div>
+      }
+    </div>
+
+    <button class="ct-btn ct-btn--block submit" type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Creating your account…' : 'Create account' }}
+    </button>
+  </form>
+
+  <p class="switch">Already have one? <a routerLink="/login">Log in</a></p>
+</div>

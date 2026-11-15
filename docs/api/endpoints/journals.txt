@@ -1,0 +1,68 @@
+All journal entry responses share this shape:
+{
+    "id": "journal entry ID",
+    "recipeId": "recipe ID",
+    "content": "Used brown butter this time. Much better, but bake 5 minutes less.",
+    "postedAt": "2026-11-14T12:00:00.000Z",
+    "editedAt": "2026-11-15T09:30:00.000Z" or null
+}
+Errors use Nest's standard shape: { "statusCode": 400, "message": [...], "error": "Bad Request" }
+
+Validation rules:
+- content: 1-10000 chars (trimmed)
+Unknown fields are rejected (400).
+
+Only the author of the recipe can add, edit or delete its entries. Entries of an archived recipe,
+or of a recipe whose author is deactivated, behave as if they don't exist (404).
+Error order: 400 (bad ID or body), 401 (token), 404 (entry or recipe), 403 (not the recipe author).
+
+GET /api/v1/journals/{id}
+Returns one journal entry. Does not require auth.
+
+Successful response (200): journal entry
+Invalid journal ID (not a GUID): 400
+Entry does not exist, or its recipe is archived: 404
+
+GET /api/v1/recipes/{recipeId}/journals
+Returns a recipe's journal entries, newest first. No pagination yet. Does not require auth.
+
+Successful response (200): array of journal entries
+Invalid recipe ID: 400
+Recipe does not exist or is archived: 404
+
+POST /api/v1/recipes/{recipeId}/journals
+Adds a journal entry to a recipe. Only the recipe's author may add entries.
+
+Request body:
+{
+    "content": "Used brown butter this time."
+}
+
+Successful response (201): the new journal entry
+Invalid recipe ID or invalid request: 400
+Missing or invalid token: 401
+Not the recipe author: 403
+Recipe does not exist or is archived: 404
+
+PATCH /api/v1/journals/{id}
+Replaces an entry's content. Only the recipe's author may edit. Sets editedAt.
+
+Request body:
+{
+    "content": "Updated notes."
+}
+
+Successful response (200): the updated journal entry
+Invalid journal ID or invalid request: 400
+Missing or invalid token: 401
+Not the recipe author: 403
+Entry does not exist, or its recipe is archived: 404
+
+DELETE /api/v1/journals/{id}
+Deletes an entry permanently (hard delete). Only the recipe's author may delete.
+
+Successful response: 204 (no body)
+Invalid journal ID: 400
+Missing or invalid token: 401
+Not the recipe author: 403
+Entry does not exist, or its recipe is archived: 404

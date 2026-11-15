@@ -1,0 +1,94 @@
+/* Mobile first: the floating tab bar. The top bar appears at the desktop breakpoint. */
+
+.topbar {
+  display: none;
+}
+
+.tabbar {
+  position: fixed;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 10;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* The design system's focus rule targets .ct-tabbar a, but ring it on cocoa clearly too. */
+.tabbar a:focus-visible {
+  outline-color: var(--butter);
+}
+
+@media (min-width: 768px) {
+  .tabbar {
+    display: none;
+  }
+
+  .topbar {
+    display: block;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .topbar__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-4) var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) 28px;
+  }
+
+  .wordmark {
+    font: italic 700 28px/1 var(--font-display);
+    letter-spacing: -0.5px;
+    color: var(--cocoa);
+    text-decoration: none;
+  }
+
+  .topbar__nav {
+    display: flex;
+    gap: 6px;
+  }
+
+  .pill {
+    height: var(--tap-target);
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    color: var(--cocoa);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .pill--active {
+    background: var(--butter);
+    font-weight: 800;
+  }
+
+  .topbar__spacer {
+    flex: 1 1 200px;
+  }
+
+  .topbar .ct-btn {
+    gap: var(--space-2);
+    padding: 0 20px;
+  }
+
+  .profile-btn {
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border-radius: var(--radius-pill);
+    background: var(--tile-sage);
+    color: var(--cocoa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-btn--active {
+    background: var(--butter);
+  }
+}

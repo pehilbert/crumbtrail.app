@@ -1,0 +1,54 @@
+<div class="picker" role="group" [attr.aria-labelledby]="idPrefix() + '-label'">
+  <div class="ct-label" [id]="idPrefix() + '-label'">
+    Pronouns <span class="ct-optional">(optional — pick one or mix)</span>
+  </div>
+
+  <div class="chips">
+    @for (set of sets; track set.word) {
+      <button
+        type="button"
+        class="ct-toggle"
+        [attr.aria-pressed]="isPicked(set.word)"
+        [disabled]="disabled()"
+        (click)="toggle(set.word)"
+      >
+        {{ set.full }}
+      </button>
+    }
+    <button
+      type="button"
+      class="ct-toggle"
+      [attr.aria-pressed]="writingOwn()"
+      [disabled]="disabled()"
+      (click)="toggleOwn()"
+    >
+      Write my own
+    </button>
+  </div>
+
+  @if (writingOwn()) {
+    <label class="ct-sr-only" [for]="idPrefix() + '-own'">Your pronouns</label>
+    <input
+      #ownInput
+      class="ct-input own"
+      type="text"
+      [id]="idPrefix() + '-own'"
+      [maxLength]="maxLength"
+      placeholder="xe/xem, ze/hir, any/all…"
+      [value]="ownText()"
+      [disabled]="disabled()"
+      (input)="setOwnText(ownInput.value)"
+      (blur)="onTouched()"
+    />
+  }
+
+  <div class="ct-hint preview" aria-live="polite">
+    @if (!writingOwn()) {
+      @if (value(); as shown) {
+        Shows on your profile as <span class="ct-highlight">{{ shown }}</span>
+      } @else {
+        No pronouns will show on your profile.
+      }
+    }
+  </div>
+</div>

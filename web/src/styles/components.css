@@ -1,0 +1,164 @@
+/* Copied from the Crumbtrail design system's components/bundle.css. The fonts are loaded in
+   index.html instead of an @import. Change the design system first, then copy it here. */
+
+/* Crumbtrail components — plain CSS classes, prefix ct-. Values come from tokens.css. */
+
+.ct-screen { background: var(--cream-100); color: var(--cocoa); font-family: var(--font-body); }
+
+/* Focus: one ring for everything */
+.ct-btn:focus-visible, .ct-icon-btn:focus-visible, .ct-toggle:focus-visible, .ct-filter:focus-visible,
+.ct-recipe-card:focus-visible, .ct-tabbar a:focus-visible {
+  outline: 3px solid var(--tomato); outline-offset: 2px;
+}
+
+/* Button */
+.ct-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  height: var(--button-height); padding: 0 28px; box-sizing: border-box;
+  border-radius: var(--radius-pill); border: 2px solid var(--cocoa);
+  background: var(--cocoa); color: var(--on-cocoa);
+  font: 800 17px/1 var(--font-body); text-decoration: none; cursor: pointer;
+}
+.ct-btn--outline { background: transparent; color: var(--cocoa); }
+.ct-btn--soft { background: var(--butter); border-color: var(--butter); color: var(--cocoa); }
+.ct-btn--sm { height: var(--tap-target); padding: 0 18px; font-size: 15px; }
+.ct-btn--block { width: 100%; }
+.ct-btn--danger { background: transparent; border-color: transparent; color: var(--tomato); padding: 0; }
+.ct-btn:disabled { opacity: 0.6; cursor: default; }
+
+.ct-icon-btn {
+  width: var(--tap-target); height: var(--tap-target); border-radius: var(--radius-pill);
+  border: none; background: var(--cream-200); color: var(--cocoa);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+/* Text field */
+.ct-field { display: flex; flex-direction: column; gap: 6px; }
+.ct-label { font: 800 14px/1.3 var(--font-body); color: var(--cocoa-muted); }
+.ct-label .ct-optional { font-weight: 600; }
+.ct-input {
+  width: 100%; height: var(--input-height); box-sizing: border-box; padding: 0 18px;
+  border-radius: var(--radius-md); border: 2px solid var(--line); background: var(--paper);
+  font: 400 16px/1.5 var(--font-body); color: var(--cocoa);
+}
+.ct-input:focus { outline: none; border-color: var(--cocoa); }
+.ct-input::placeholder { color: var(--cocoa-faint); }
+textarea.ct-input { height: auto; padding: 12px 16px; resize: vertical; }
+.ct-input--display { height: 64px; font: 700 24px/1.2 var(--font-display); }
+.ct-hint { font: 400 13px/1.35 var(--font-body); color: var(--cocoa-muted); }
+.ct-handle { position: relative; }
+.ct-handle::before {
+  content: "@"; position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+  font: 800 16px var(--font-body); color: var(--cocoa-faint); pointer-events: none;
+}
+.ct-handle .ct-input { padding-left: 36px; }
+
+/* Field errors: a tomato hint, and a tomato border while the input is invalid */
+.ct-hint--error { color: var(--tomato); font-weight: 700; }
+.ct-input[aria-invalid="true"] { border-color: var(--tomato); }
+
+/* Alert: a form-level error, flat like every other card */
+.ct-alert {
+  background: var(--paper); color: var(--tomato); border-radius: var(--radius-md);
+  padding: 12px 16px; font: 700 15px/1.4 var(--font-body);
+}
+
+/* Chips: tags (static), filters and toggles (pressable) */
+.ct-tag {
+  display: inline-flex; align-items: center; height: 32px; padding: 0 14px;
+  border-radius: var(--radius-pill); background: var(--cream-200); color: var(--cocoa);
+  font: italic 500 15px var(--font-display);
+}
+.ct-filter {
+  height: 40px; padding: 0 16px; border-radius: var(--radius-pill); border: none;
+  background: var(--cream-200); color: var(--cocoa); font: 700 14px var(--font-body); cursor: pointer;
+}
+.ct-filter[aria-pressed="true"] { background: var(--cocoa); color: var(--on-cocoa); font-weight: 800; }
+.ct-toggle {
+  height: var(--tap-target); padding: 0 16px; border-radius: var(--radius-pill);
+  border: 2px solid var(--line); background: var(--paper); color: var(--cocoa);
+  font: 800 15px var(--font-body); cursor: pointer;
+}
+.ct-toggle[aria-pressed="true"] { background: var(--cocoa); border-color: var(--cocoa); color: var(--on-cocoa); }
+.ct-highlight {
+  display: inline-block; background: var(--butter); color: var(--cocoa); border-radius: var(--radius-pill);
+  padding: 2px 10px; font: 800 14px var(--font-body);
+}
+
+/* Sticky note (journal entries only) */
+.ct-note {
+  position: relative; box-sizing: border-box; background: var(--sticky-butter); color: var(--cocoa);
+  border-radius: 4px 4px 4px var(--radius-md); padding: 26px 18px 18px;
+  box-shadow: var(--shadow-note); display: flex; flex-direction: column; gap: 8px;
+}
+.ct-note::before {
+  content: ""; position: absolute; top: -10px; left: 50%; width: 84px; height: 22px; margin-left: -42px;
+  background: var(--tape); border-radius: 2px; transform: rotate(-3deg);
+}
+.ct-note--blush { background: var(--sticky-blush); }
+.ct-note--sage { background: var(--sticky-sage); }
+.ct-note--sky { background: var(--sticky-sky); }
+.ct-note--tilt-left { transform: rotate(-1.6deg); }
+.ct-note--tilt-right { transform: rotate(1.4deg); }
+.ct-note__meta {
+  display: flex; justify-content: space-between; gap: 12px;
+  font: 800 13px/1.2 var(--font-body); letter-spacing: 0.6px; text-transform: uppercase; color: var(--cocoa-muted);
+}
+.ct-note__body { font: italic 500 18px/1.4 var(--font-display); margin: 0; }
+
+/* Recipe card */
+.ct-recipe-card { display: flex; flex-direction: column; gap: 8px; color: var(--cocoa); text-decoration: none; }
+.ct-recipe-card__tile {
+  position: relative; overflow: hidden; height: 128px; box-sizing: border-box; padding: 12px;
+  border-radius: var(--radius-lg); background: var(--tile-butter); display: flex; align-items: flex-end;
+}
+.ct-recipe-card__mono {
+  position: absolute; right: -6px; top: -14px; font: italic 700 96px/1 var(--font-display); opacity: 0.22;
+}
+.ct-recipe-card__time {
+  position: relative; background: var(--cream-100); border-radius: var(--radius-pill);
+  padding: 4px 10px; font: 800 12px var(--font-body);
+}
+.ct-recipe-card__title { font: 700 17px/1.15 var(--font-display); padding: 0 4px; }
+.ct-tile--peach { background: var(--tile-peach); }
+.ct-tile--sage { background: var(--tile-sage); }
+.ct-tile--oat { background: var(--tile-oat); }
+.ct-tile--apricot { background: var(--tile-apricot); }
+.ct-tile--honey { background: var(--tile-honey); }
+
+/* Ingredient list */
+.ct-ingredients { background: var(--paper); border-radius: var(--radius-lg); padding: 6px 16px; display: flex; flex-direction: column; }
+.ct-ingredient {
+  display: flex; align-items: center; gap: 14px; min-height: 48px;
+  border-bottom: 1px dashed var(--line); cursor: pointer; font: 400 16px/1.4 var(--font-body);
+}
+.ct-ingredient:last-child { border-bottom: none; }
+.ct-ingredient input { accent-color: var(--tomato); width: 22px; height: 22px; margin: 0; flex-shrink: 0; }
+.ct-ingredient__text { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.ct-ingredient input:checked + .ct-ingredient__text { text-decoration: line-through; opacity: 0.55; }
+.ct-ingredient__qty { font-weight: 800; min-width: 64px; }
+.ct-ingredient__adj { color: var(--cocoa-muted); }
+
+/* Step card */
+.ct-step { display: flex; gap: 14px; background: var(--paper); border-radius: var(--radius-lg); padding: 16px; }
+.ct-step__num {
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: var(--radius-pill); background: var(--butter);
+  display: flex; align-items: center; justify-content: center; font: 700 18px var(--font-display);
+}
+.ct-step__body { font: 400 16px/1.55 var(--font-body); padding-top: 6px; margin: 0; }
+
+/* Add box: dashed area for adding an ingredient or step */
+.ct-add-box { border: 2px dashed var(--line-strong); border-radius: var(--radius-lg); padding: 14px; }
+
+/* Mobile tab bar */
+.ct-tabbar {
+  height: 68px; border-radius: var(--radius-pill); background: var(--cocoa);
+  display: flex; justify-content: space-around; align-items: center; padding: 0 10px;
+}
+.ct-tabbar a {
+  width: 52px; height: 52px; border-radius: var(--radius-pill); color: var(--on-cocoa);
+  display: flex; align-items: center; justify-content: center;
+}
+.ct-tabbar a[aria-current="page"] { background: var(--butter); color: var(--cocoa); }
+
+.ct-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
