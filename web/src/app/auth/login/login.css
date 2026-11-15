@@ -1,0 +1,96 @@
+.screen {
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  height: 330px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 28px 34px;
+  background: var(--butter);
+  border-radius: 0 0 48px 48px;
+}
+
+.hero__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.trail {
+  stroke: var(--cocoa);
+  opacity: 0.35;
+}
+
+.cookie {
+  fill: var(--butter-deep);
+}
+
+.chip {
+  fill: var(--cocoa);
+}
+
+.wordmark {
+  position: relative;
+  font: italic 700 52px/1 var(--font-display);
+  letter-spacing: -1px;
+}
+
+.tagline {
+  position: relative;
+  margin-top: var(--space-2);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: var(--space-8) var(--space-6) 0;
+}
+
+.title {
+  font: 700 28px/1.1 var(--font-display);
+}
+
+.ct-input {
+  height: 54px;
+}
+
+.submit {
+  margin-top: 6px;
+}
+
+.switch {
+  margin-top: auto;
+  padding: var(--space-8) var(--space-6) 36px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--cocoa-muted);
+}
+
+.switch a {
+  font-weight: 800;
+}
+
+/* Desktop: the same card, floating in the middle of the page. */
+@media (min-width: 768px) {
+  .screen {
+    min-height: auto;
+    padding-top: var(--space-10);
+  }
+
+  .hero {
+    border-radius: 48px;
+  }
+}

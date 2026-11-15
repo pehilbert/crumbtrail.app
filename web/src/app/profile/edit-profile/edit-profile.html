@@ -1,0 +1,103 @@
+<form class="screen" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <div class="top">
+    <a class="ct-btn ct-btn--sm cancel" routerLink="/profile">Cancel</a>
+    <div class="aside" aria-hidden="true">edit profile</div>
+    <button class="ct-btn ct-btn--sm" type="submit" [disabled]="saving()">
+      {{ saving() ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+
+  <h1 class="title">About you</h1>
+
+  <div class="fields">
+    @if (error(); as message) {
+      <div class="ct-alert" role="alert">{{ message }}</div>
+    }
+
+    <div class="names">
+      <div class="ct-field">
+        <label class="ct-label" for="ep-first">First name</label>
+        <input
+          class="ct-input"
+          id="ep-first"
+          type="text"
+          autocomplete="given-name"
+          maxlength="50"
+          formControlName="firstName"
+          [attr.aria-invalid]="!!fieldError('firstName')"
+          [attr.aria-describedby]="fieldError('firstName') ? 'ep-first-error' : null"
+        />
+        @if (fieldError('firstName'); as message) {
+          <div class="ct-hint ct-hint--error" id="ep-first-error">{{ message }}</div>
+        }
+      </div>
+      <div class="ct-field">
+        <label class="ct-label" for="ep-last">Last name</label>
+        <input
+          class="ct-input"
+          id="ep-last"
+          type="text"
+          autocomplete="family-name"
+          maxlength="50"
+          formControlName="lastName"
+          [attr.aria-invalid]="!!fieldError('lastName')"
+          [attr.aria-describedby]="fieldError('lastName') ? 'ep-last-error' : null"
+        />
+        @if (fieldError('lastName'); as message) {
+          <div class="ct-hint ct-hint--error" id="ep-last-error">{{ message }}</div>
+        }
+      </div>
+    </div>
+
+    <div class="ct-field">
+      <label class="ct-label" for="ep-user">Username</label>
+      <div class="ct-handle">
+        <input
+          class="ct-input"
+          id="ep-user"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+          maxlength="30"
+          ctLowercase
+          formControlName="username"
+          aria-describedby="ep-user-hint"
+          [attr.aria-invalid]="!!fieldError('username')"
+        />
+      </div>
+      <div class="ct-hint" id="ep-user-hint" [class.ct-hint--error]="!!fieldError('username')">
+        {{ fieldError('username') ?? usernameHint }}
+      </div>
+    </div>
+
+    <ct-pronoun-picker idPrefix="ep-pro" formControlName="pronouns" />
+
+    <div class="ct-field">
+      <div class="ct-label" id="ep-email-label">Email</div>
+      <div
+        class="locked"
+        aria-labelledby="ep-email-label"
+        aria-describedby="ep-email-hint"
+        role="group"
+      >
+        <span>{{ user.email }}</span>
+        <svg
+          aria-hidden="true"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 018 0v4" />
+        </svg>
+      </div>
+      <div class="ct-hint" id="ep-email-hint">Changing your email or password is coming soon.</div>
+    </div>
+  </div>
+</form>

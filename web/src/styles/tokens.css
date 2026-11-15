@@ -1,0 +1,57 @@
+/* Generated from the Crumbtrail design system's tokens.json (version 1). Edit the tokens there. */
+
+:root {
+  /* Color */
+  --cream-100: #fbf5ec;
+  --cream-200: #f2e7d6;
+  --paper: #ffffff;
+  --line: #eadcc8;
+  --line-strong: #c9b49f;
+  --cocoa: #3b2a20;
+  --cocoa-muted: #6b5446;
+  --cocoa-faint: #7f6a5c;
+  --on-cocoa: var(--cream-100);
+  --butter: #f4d58d;
+  --butter-deep: #e9b95c;
+  --tomato: #b4462a;
+  --tape: rgba(244, 213, 141, 0.75);
+  --sticky-butter: #fff1b8;
+  --sticky-blush: #fbd9cc;
+  --sticky-sage: #e4ecd6;
+  --sticky-sky: #dce8f2;
+  --tile-butter: var(--butter);
+  --tile-peach: #f6c7b6;
+  --tile-sage: #dde5cf;
+  --tile-oat: #e9d9be;
+  --tile-apricot: #f3b9a0;
+  --tile-honey: #f7dfa8;
+
+  /* Type */
+  --font-display: Fraunces, Georgia, serif;
+  --font-body: Nunito, system-ui, sans-serif;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Radius */
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-note: 0 10px 18px -10px rgba(59, 42, 32, 0.35);
+
+  /* Size */
+  --tap-target: 44px;
+  --input-height: 52px;
+  --button-height: 56px;
+}

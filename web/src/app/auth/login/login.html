@@ -1,0 +1,67 @@
+<div class="screen">
+  <header class="hero">
+    <svg
+      class="hero__art"
+      aria-hidden="true"
+      viewBox="0 0 390 330"
+      preserveAspectRatio="xMaxYMid slice"
+      fill="none"
+    >
+      <path
+        class="trail"
+        d="M-20 120 C 60 60, 130 180, 220 120 S 360 50, 420 130"
+        stroke-width="3"
+        stroke-dasharray="2 13"
+        stroke-linecap="round"
+      />
+      <circle class="cookie" cx="300" cy="104" r="54" />
+      <circle class="chip" cx="284" cy="90" r="7" />
+      <circle class="chip" cx="314" cy="112" r="5.5" />
+      <circle class="chip" cx="292" cy="128" r="5" />
+      <circle class="chip" cx="320" cy="82" r="4" />
+      <circle class="cookie" cx="60" cy="70" r="7" />
+      <circle class="cookie" cx="96" cy="52" r="4" />
+    </svg>
+    <div class="wordmark">crumbtrail</div>
+    <p class="tagline">Your recipes, minus the noise.</p>
+  </header>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <h1 class="title">Welcome back</h1>
+
+    @if (error(); as message) {
+      <div class="ct-alert" role="alert">{{ message }}</div>
+    }
+
+    <div class="ct-field">
+      <label class="ct-label" for="li-login">Email or username</label>
+      <input
+        class="ct-input"
+        id="li-login"
+        type="text"
+        autocomplete="username"
+        autocapitalize="none"
+        spellcheck="false"
+        placeholder="you@example.com"
+        formControlName="login"
+      />
+    </div>
+
+    <div class="ct-field">
+      <label class="ct-label" for="li-pass">Password</label>
+      <input
+        class="ct-input"
+        id="li-pass"
+        type="password"
+        autocomplete="current-password"
+        formControlName="password"
+      />
+    </div>
+
+    <button class="ct-btn ct-btn--block submit" type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Logging in…' : 'Log in' }}
+    </button>
+  </form>
+
+  <p class="switch">New here? <a routerLink="/register">Make an account</a></p>
+</div>

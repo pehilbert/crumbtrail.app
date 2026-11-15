@@ -1,0 +1,95 @@
+All user profile responses share this shape (public profile):
+{
+    "id": "user ID",
+    "username": "johnny123",
+    "firstName": "John",
+    "lastName": "Smith",
+    "pronouns": "he/him" or null,
+    "joinDate": "2026-11-14T12:00:00.000Z"
+}
+The private profile (only ever returned to the user themselves) adds "email".
+Errors use Nest's standard shape: { "statusCode": 400, "message": [...], "error": "Bad Request" }
+
+Validation rules:
+- username: 3-30 chars, letters, digits, "_" and "." only
+- password: 8-128 chars
+- email: valid email address
+- firstName / lastName: 1-50 chars
+- pronouns: up to 30 chars, or null
+
+GET /api/v1/users/me
+Returns the private profile of the user identified by the auth token.
+
+Successful response (200): private profile
+Missing or invalid token: 401
+
+GET /api/v1/users/{id}
+Returns basic profile info about a user (no password/email). Eventually we can scope the data returned
+based on the auth token, but for now this should be all we need. Does not require auth.
+
+Successful Response (200): public profile
+Invalid user ID (not a GUID): 400
+User does not exist or is deactivated: 404
+
+POST /api/v1/users
+Registers a new user. Username and email must be unique (case-insensitive). Hash the password
+before storing it. Returns an access token and sets the refresh cookie (see auth.txt), so the new
+user is logged in immediately. Rate limited.
+
+Request body:
+{
+    "username": "johnny123",
+    "password": "password123",
+    "firstName": "John",
+    "lastName": "Smith",
+    "pronouns": "he/him" or null (optional),
+    "email": "johnnyboy@gmail.com"
+}
+
+Successful Response (201), plus Set-Cookie with a new refresh token:
+{
+    "id": "newly generated user ID",
+    "accessToken": "JWT for the new user"
+}
+
+Invalid or incomplete request: 400
+Non-unique username or email: 409
+Too many attempts: 429
+
+PATCH /api/v1/users/{id}
+Update certain allowed fields provided for a user. Requires auth token, the requesting user must
+match the user ID provided. Although usernames can be changed, the new one must still be unique.
+Omitted fields are left unchanged; "pronouns": null clears pronouns.
+Email and password changes are separate Phase 1 functionality.
+
+Request body (at least one field):
+{
+    "username": "johnny123" (optional),
+    "firstName": "John" (optional),
+    "lastName": "Smith" (optional),
+    "pronouns": "he/him" or null (optional)
+}
+
+Successful response (200): updated private profile
+Invalid or empty request: 400
+Missing or invalid token: 401
+User ID-token mismatch: 403
+Non-unique username: 409
+
+DELETE /api/v1/users/{id}
+Delete an account (soft-delete, simply set active flag to false in Mongo). Requires auth token, only that user
+may deactivate themselves. Reactivation is separate, later functionality.
+All of the user's refresh tokens are deleted (every session ends) and the response clears the
+refresh cookie. Their access tokens are already rejected because the user is no longer active.
+
+Successful response (200):
+{
+    "id": "user ID",
+    "active": false
+}
+Invalid user ID: 400
+Missing or invalid token: 401
+User ID-token mismatch: 403
+
+Note: 404 is not listed for PATCH/DELETE because a valid token always belongs to an existing,
+active user, so any other ID is rejected with 403 before a lookup happens.

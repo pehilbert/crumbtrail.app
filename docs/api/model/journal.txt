@@ -1,0 +1,13 @@
+Journal (Collection):
+ID: Guid (string, stored as Mongo _id)
+RecipeId: Recipe.ID
+PostedAt: Timestamp (set on create)
+EditedAt: Timestamp (null until the first edit)
+Content: string
+
+Notes:
+- A journal entry has no author field: only the recipe's author can write entries, so the entry's
+  author is always the recipe's author, and ownership is checked through the recipe.
+  If other users can journal on a recipe later (Phase 1 social features), add an AuthorId then.
+- Deleting an entry removes it (hard delete).
+- Entries of an archived recipe, or of a recipe whose author is deactivated, return 404.

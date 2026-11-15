@@ -1,0 +1,129 @@
+@if (user(); as user) {
+  <div class="screen">
+    <header class="hero">
+      <svg
+        class="hero__art"
+        aria-hidden="true"
+        viewBox="0 0 390 230"
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
+      >
+        <path
+          class="trail"
+          d="M-20 70 C 70 20, 150 130, 240 70 S 370 20, 420 80"
+          stroke-width="3"
+          stroke-dasharray="2 13"
+          stroke-linecap="round"
+        />
+      </svg>
+      <div class="hero__text">
+        <h1 class="name">{{ user.firstName }} {{ user.lastName }}</h1>
+        <div class="handle">
+          <span>&#64;{{ user.username }}</span>
+          @if (user.pronouns) {
+            <span class="pronouns">{{ user.pronouns }}</span>
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="actions">
+      <a class="ct-btn ct-btn--outline ct-btn--sm" routerLink="/profile/edit">Edit profile</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__value">{{ recipeCount() ?? '–' }}</div>
+        <div class="stat__label">{{ recipeCount() === 1 ? 'recipe saved' : 'recipes saved' }}</div>
+      </div>
+      <div class="stat stat--note">
+        <div class="stat__value">{{ joined() }}</div>
+        <div class="stat__label">joined crumbtrail</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Recently saved</h2>
+    @if (recipes() === undefined) {
+      <p class="empty">Loading your recipes…</p>
+    } @else if (recipes() === null) {
+      <p class="empty">Your recipes didn’t load. Try again in a bit.</p>
+    } @else {
+      @if (recent().length) {
+        <ul class="recent">
+          @for (recipe of recent(); track recipe.id) {
+            <li class="ct-recipe-card recent__card">
+              <div class="ct-recipe-card__tile recent__tile" [class]="tileClass(recipe.id)">
+                <div class="ct-recipe-card__mono recent__mono" aria-hidden="true">
+                  {{ recipe.title.charAt(0) }}
+                </div>
+              </div>
+              <div class="ct-recipe-card__title recent__title">{{ recipe.title }}</div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">Nothing here yet. Your newest recipes will show up here.</p>
+      }
+    }
+
+    <h2 class="section-title">Account</h2>
+    <div class="account">
+      <div class="row">
+        <span class="row__label">Email</span><span class="row__value">{{ user.email }}</span>
+      </div>
+      <div class="row">
+        <span class="row__label">Username</span
+        ><span class="row__value">&#64;{{ user.username }}</span>
+      </div>
+      <div class="row">
+        <span class="row__label">Pronouns</span
+        ><span class="row__value">{{ user.pronouns ?? 'Not set' }}</span>
+      </div>
+      <button type="button" class="row row__button" [disabled]="busy()" (click)="logOut()">
+        Log out
+      </button>
+
+      @if (confirmingDeactivate()) {
+        <div class="confirm" role="group" aria-labelledby="deactivate-title">
+          <p class="confirm__title" id="deactivate-title">Deactivate your account?</p>
+          <p class="confirm__body">
+            Your profile and recipes will be hidden, and you’ll be logged out everywhere. You can’t
+            undo this yet.
+          </p>
+          @if (error(); as message) {
+            <div class="ct-alert" role="alert">{{ message }}</div>
+          }
+          <div class="confirm__actions">
+            <button
+              #keepButton
+              type="button"
+              class="ct-btn ct-btn--outline ct-btn--sm"
+              [disabled]="busy()"
+              (click)="keepAccount()"
+            >
+              Keep my account
+            </button>
+            <button
+              type="button"
+              class="ct-btn ct-btn--sm confirm__danger"
+              [disabled]="busy()"
+              (click)="deactivate()"
+            >
+              {{ busy() ? 'Deactivating…' : 'Deactivate' }}
+            </button>
+          </div>
+        </div>
+      } @else {
+        <button
+          #deactivateButton
+          type="button"
+          class="row row__button row__button--danger"
+          [disabled]="busy()"
+          (click)="askToDeactivate()"
+        >
+          Deactivate account
+        </button>
+      }
+    </div>
+  </div>
+}

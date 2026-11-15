@@ -1,0 +1,78 @@
+How sign-in works
+A signed-in client holds two tokens:
+- Access token: a short-lived JWT (JWT_EXPIRES_IN, default 15m) encoded with the user ID (sub claim).
+  Returned in the response body. Send "Authorization: Bearer <accessToken>" on protected endpoints.
+  A token for a user who has since been deactivated is rejected (401).
+- Refresh token: a long-lived random value (REFRESH_TOKEN_EXPIRES_IN, default 30d), only ever sent
+  as an httpOnly cookie, so page JavaScript cannot read it. Used only to get new access tokens.
+
+Refresh cookie: "crumbtrail_refresh", HttpOnly, Path=/api/v1/auth (the browser sends it only to
+the auth endpoints), Max-Age = REFRESH_TOKEN_EXPIRES_IN, Secure unless REFRESH_COOKIE_SECURE=false,
+SameSite = REFRESH_COOKIE_SAME_SITE (default strict).
+Browser clients must send credentials on the auth calls (fetch: credentials: "include";
+Angular HttpClient: withCredentials: true), and their origin must be listed in CORS_ORIGINS.
+
+Login and registration (POST /api/v1/users) both set the cookie and start a new session.
+When an API call returns 401 because the access token expired, the client calls
+POST /api/v1/auth/refresh, stores the new access token and retries the call. If refresh also
+returns 401, the session is over and the user must log in again.
+
+Rotation: every refresh spends the presented refresh token and sets a new one. The tokens issued
+from one login form a session. Presenting a token that was already spent is treated as theft and
+ends the whole session, except within 10 seconds of it being spent: that is taken to be two tabs
+refreshing at the same time, and the late request gets its own new token in the same session.
+
+Native mobile clients (deferred until the Capacitor/Ionic port): the refresh token is cookie-only
+for now, which native apps cannot rely on. GitHub issue #4 proposes letting native clients receive
+it in the response body, fixed per session at login so a web session can never switch to a
+readable token. Not part of Phase 0.
+
+Cross-site request protection:state-changing requests from browser origins other than the API's
+own and those in CORS_ORIGINS are rejected with 403 (Fetch Metadata / Origin check). Clients that
+send no Origin header (Postman, servers, mobile apps) are unaffected.
+
+POST /api/v1/auth/login
+Request a user login with a username OR email plus a password. If credentials are correct,
+return an access token and set the refresh cookie.
+The "login" field is treated as an email if it contains "@", otherwise as a username
+(usernames cannot contain "@"). Both are matched case-insensitively.
+Deactivated users cannot log in. Rate limited.
+
+Request body:
+{
+    "login": "johnny123" or "johnnyboy@gmail.com",
+    "password": "password123"
+}
+
+Successful response (200), plus Set-Cookie with a new refresh token:
+{
+    "id": "user ID",
+    "accessToken": "JWT that was generated"
+}
+
+Invalid request body: 400
+Incorrect credentials or deactivated user: 401 (same response either way)
+Too many attempts: 429
+
+POST /api/v1/auth/refresh
+Exchange the refresh cookie for a new access token. No request body and no Authorization header
+needed (an expired access token is the usual reason to call this). Rate limited.
+
+Successful response (200), plus Set-Cookie with the rotated refresh token:
+{
+    "id": "user ID",
+    "accessToken": "new JWT"
+}
+
+Missing, unknown, expired or revoked refresh token, reused spent token, or deactivated user: 401
+(the response also clears the cookie, except for a concurrent refresh inside the 10 second window,
+which succeeds instead)
+Too many attempts: 429
+
+POST /api/v1/auth/logout
+End the session the refresh cookie belongs to and clear the cookie. No Authorization header
+needed, so logout works after the access token has expired. Idempotent: with no cookie, or a
+cookie that is already invalid, it still succeeds. The client should also discard its access
+token, which stays valid until it expires (at most JWT_EXPIRES_IN).
+
+Successful response: 204 (no body), plus Set-Cookie clearing the refresh cookie

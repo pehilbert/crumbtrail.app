@@ -1,0 +1,18 @@
+RefreshToken (Collection: refreshTokens):
+ID: Guid (string, stored as Mongo _id)
+UserId: Guid (the user the token was issued to)
+SessionId: Guid (shared by every token rotated from one login or registration)
+TokenHash: string (SHA-256 of the token, hex; unique. The raw token is never stored.)
+CreatedAt: Timestamp
+ExpiresAt: Timestamp (CreatedAt + REFRESH_TOKEN_EXPIRES_IN; TTL index, Mongo deletes the record after this)
+SpentAt: Timestamp (null until the token is exchanged at /auth/refresh)
+
+Notes:
+- The raw token is 32 random bytes, base64url-encoded, and only ever leaves the server in the
+  refresh cookie.
+- Rotation sets SpentAt on the presented token (atomically, so only one request can spend it)
+  and inserts its successor with the same SessionId and a fresh ExpiresAt. A session that keeps
+  refreshing therefore stays signed in; one idle for REFRESH_TOKEN_EXPIRES_IN expires.
+- Spent tokens are kept until they expire so that reuse can be detected.
+- Ending a session (logout, or reuse of a spent token outside the 10 second grace window)
+  hard-deletes every token with that SessionId. Deactivating a user deletes all of their tokens.

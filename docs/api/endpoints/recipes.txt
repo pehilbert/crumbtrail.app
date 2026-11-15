@@ -1,0 +1,92 @@
+All recipe responses share this shape:
+{
+    "id": "recipe ID",
+    "author": { "id": "user ID", "username": "johnny123" },
+    "title": "Grandma's Banana Bread",
+    "description": "Moist and dense." or null,
+    "tags": ["baking", "breakfast"],
+    "timeEstimateMinutes": 75 or null,
+    "ingredients": [
+        { "quantity": 2 or null, "unit": "cup" or null, "ingredient": "flour", "adjective": "sifted" or null }
+    ],
+    "steps": ["Preheat the oven to 350F.", "Mash the bananas."],
+    "publishedAt": "2026-11-14T12:00:00.000Z",
+    "editedAt": "2026-11-15T09:30:00.000Z" or null
+}
+The full recipe (returned by GET by ID, POST and PATCH) adds "journals": the recipe's journal
+entries, newest first (see journals.txt for their shape).
+The recipe summary (returned by GET /recipes/me) adds "journalCount" instead.
+Errors use Nest's standard shape: { "statusCode": 400, "message": [...], "error": "Bad Request" }
+
+Validation rules:
+- title: 1-120 chars
+- description: 1-2000 chars, or null
+- tags: up to 20, each 1-30 chars; trimmed, lowercased, duplicates removed
+- timeEstimateMinutes: integer from 1 to 10080 (one week), or null
+- ingredients: 1-100 entries
+    - quantity: positive number, or null (optional, defaults to null)
+    - unit: 1-30 chars, or null (optional, defaults to null)
+    - ingredient: 1-100 chars
+    - adjective: 1-50 chars, or null (optional, defaults to null)
+- steps: 1-100 entries, each 1-5000 chars
+Unknown fields are rejected (400).
+
+Archived recipes, and recipes whose author is deactivated, behave as if they don't exist (404)
+on every endpoint, for the author too.
+Error order: 400 (bad ID or body), 401 (token), 404 (recipe), 403 (not the author).
+
+GET /api/v1/recipes/me
+Returns the active recipes of the user identified by the auth token, newest first. No pagination yet.
+
+Successful response (200): array of recipe summaries
+Missing or invalid token: 401
+
+GET /api/v1/recipes/{id}
+Returns a recipe with its journal entries. Does not require auth.
+
+Successful response (200): full recipe
+Invalid recipe ID (not a GUID): 400
+Recipe does not exist or is archived: 404
+
+POST /api/v1/recipes
+Creates a recipe. The author is the user identified by the auth token.
+
+Request body:
+{
+    "title": "Grandma's Banana Bread",
+    "description": "Moist and dense." or null (optional),
+    "tags": ["baking"] (optional, defaults to []),
+    "timeEstimateMinutes": 75 or null (optional),
+    "ingredients": [{ "quantity": 2, "unit": "cup", "ingredient": "flour", "adjective": "sifted" }],
+    "steps": ["Preheat the oven to 350F."]
+}
+
+Successful response (201): full recipe (with "journals": [])
+Invalid or incomplete request: 400
+Missing or invalid token: 401
+
+PATCH /api/v1/recipes/{id}
+Updates the provided fields. Only the author may edit. Omitted fields are left unchanged;
+null clears description or timeEstimateMinutes. Sending ingredients, steps or tags replaces the
+whole array. Sets editedAt.
+
+Request body (at least one field): any of the POST fields
+
+Successful response (200): updated full recipe
+Invalid ID or invalid/empty request: 400
+Missing or invalid token: 401
+Not the author: 403
+Recipe does not exist or is archived: 404
+
+DELETE /api/v1/recipes/{id}
+Archives a recipe (soft delete, sets archived to true). Only the author may archive.
+
+Successful response (200):
+{
+    "id": "recipe ID",
+    "archived": true
+}
+Invalid recipe ID: 400
+Missing or invalid token: 401
+Not the author: 403
+Recipe does not exist or is already archived: 404
