@@ -1,0 +1,53 @@
+<div class="screen">
+  <header class="intro">
+    <p class="aside">journal</p>
+    <h1 class="title">Which recipe did you make?</h1>
+  </header>
+
+  @if (recipes() === undefined) {
+    <p class="message">Loading your recipes…</p>
+  } @else if (recipes() === null) {
+    <p class="message" role="alert">Your recipes didn’t load. Try again in a bit.</p>
+  } @else if (recipes()!.length === 0) {
+    <div class="empty">
+      <p class="message">Save a recipe first, then come back to write about how it went.</p>
+      <a class="ct-btn" routerLink="/recipes/new">New recipe</a>
+    </div>
+  } @else {
+    <ul class="list">
+      @for (recipe of recipes(); track recipe.id) {
+        <li>
+          <a class="row" [routerLink]="['/recipes', recipe.id, 'journal', 'new']">
+            <span class="ct-recipe-card__tile row__tile" [class]="tileClass(recipe.id)">
+              <span class="row__mono" aria-hidden="true">{{ recipe.title.charAt(0) }}</span>
+            </span>
+            <span class="row__text">
+              <span class="row__title">{{ recipe.title }}</span>
+              <span class="row__meta">
+                @if (recipe.journalCount) {
+                  {{ plural(recipe.journalCount, 'entry', 'entries') }} so far
+                } @else {
+                  no entries yet
+                }
+              </span>
+            </span>
+            <svg
+              class="row__arrow"
+              aria-hidden="true"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</div>

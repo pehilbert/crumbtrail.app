@@ -58,8 +58,11 @@ Update this section as work lands.
   - API docs are copied from crumbtrail.api's `feature/auth-refresh` branch at commit `b73fe90`.
   - The dev-server proxy, the styles (`tokens.css`, `base.css`, `components.css` from the design system's `bundle.css`), and the fonts.
   - Auth: `AuthService` with the web `TokenStore`, the refresh interceptor, and the route guards.
-  - The app shell (mobile tab bar, desktop top bar). Recipes, New recipe and Journal are "coming soon" placeholders; login lands on `/profile` until the library exists (`HOME_URL` in `core/auth/auth.guards.ts`).
+  - The app shell (mobile tab bar, desktop top bar). Login lands on the library (`HOME_URL` in `core/auth/auth.guards.ts`).
   - Screens: log in, register, profile, edit profile (including deactivate account, with an inline confirm).
-- **Next:** the recipe library, recipe view, new recipe and new journal entry screens. When the recipe view exists, link the profile's "Recently made" cards to it and point `HOME_URL` at the library.
+  - Recipes: the library (`/recipes`, with search and tag filters in the browser), the recipe view (`/recipes/:id`), and one form for new and edit (`/recipes/new`, `/recipes/:id/edit`; edit sends only changed fields, and has delete with an inline confirm). Ingredients and steps reorder with CDK drag and drop, or the arrow keys on the handle. The profile's "Recently saved" cards link to the recipe view.
+  - Journal: write, edit and delete entries (`/recipes/:id/journal/new`, `/recipes/:id/journal/:entryId/edit`), reached from the recipe page's "+ Add entry" and each note's "Edit". The Journal tab (`/journal`) is a recipe picker for now, since the API has no list of all of a user's entries.
+  - Recipe decisions: no "Start cooking" button until a cooking mode is designed; units are a dropdown with an "other…" free-text option, and word units show plural above one ("2 cups"); amounts accept `1½`, `1 1/2` or `1.5` and show as fractions; tags show as sans-serif hashtags (`#baking`), overriding the design system's italic serif `ct-tag`.
+- **Next:** a Journal feed of all entries, once the API can list them. Ingredient lines can only be removed and re-added, not edited in place.
 - **Waiting on the API:** native-client refresh tokens (crumbtrail.api issue #4). It only matters for the mobile port.
 - **Deferred:** Capacitor and mobile, SSR for shared recipe links (Phase 1), Playwright end-to-end tests, and a decision on a hosted identity provider (start of Phase 1).

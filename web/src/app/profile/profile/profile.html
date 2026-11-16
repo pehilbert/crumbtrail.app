@@ -51,13 +51,15 @@
       @if (recent().length) {
         <ul class="recent">
           @for (recipe of recent(); track recipe.id) {
-            <li class="ct-recipe-card recent__card">
-              <div class="ct-recipe-card__tile recent__tile" [class]="tileClass(recipe.id)">
-                <div class="ct-recipe-card__mono recent__mono" aria-hidden="true">
-                  {{ recipe.title.charAt(0) }}
+            <li class="recent__item">
+              <a class="ct-recipe-card recent__card" [routerLink]="['/recipes', recipe.id]">
+                <div class="ct-recipe-card__tile recent__tile" [class]="tileClass(recipe.id)">
+                  <div class="ct-recipe-card__mono recent__mono" aria-hidden="true">
+                    {{ recipe.title.charAt(0) }}
+                  </div>
                 </div>
-              </div>
-              <div class="ct-recipe-card__title recent__title">{{ recipe.title }}</div>
+                <div class="ct-recipe-card__title recent__title">{{ recipe.title }}</div>
+              </a>
             </li>
           }
         </ul>

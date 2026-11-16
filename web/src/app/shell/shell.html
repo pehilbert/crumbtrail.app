@@ -5,9 +5,8 @@
       <a
         class="pill"
         routerLink="/recipes"
-        routerLinkActive="pill--active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        ariaCurrentWhenActive="page"
+        [class.pill--active]="recipesCurrent()"
+        [attr.aria-current]="recipesCurrent()"
         >My recipes</a
       >
       <a
@@ -64,13 +63,7 @@
 
 @if (!hideTabBar()) {
   <nav class="ct-tabbar tabbar" aria-label="Main">
-    <a
-      routerLink="/recipes"
-      routerLinkActive
-      [routerLinkActiveOptions]="{ exact: true }"
-      ariaCurrentWhenActive="page"
-      aria-label="Recipes"
-    >
+    <a routerLink="/recipes" [attr.aria-current]="recipesCurrent()" aria-label="Recipes">
       <svg
         aria-hidden="true"
         width="22"

@@ -1,0 +1,513 @@
+@switch (loadState()) {
+  @case ('loading') {
+    <div class="screen">
+      <p class="message">Getting the recipe…</p>
+    </div>
+  }
+  @case ('missing') {
+    <div class="screen message-block">
+      <h1 class="message-block__title">We couldn’t find that recipe.</h1>
+      <p class="message">It may have been deleted, or the link is off.</p>
+      <a class="ct-btn ct-btn--outline ct-btn--sm" routerLink="/recipes">Back to my recipes</a>
+    </div>
+  }
+  @case ('forbidden') {
+    <div class="screen message-block">
+      <h1 class="message-block__title">This isn’t your recipe.</h1>
+      <p class="message">You can only edit recipes you saved.</p>
+      <a class="ct-btn ct-btn--outline ct-btn--sm" [routerLink]="closeLink()">Back to the recipe</a>
+    </div>
+  }
+  @case ('error') {
+    <div class="screen message-block">
+      <p class="message" role="alert">This recipe didn’t load. Try again in a bit.</p>
+      <a class="ct-btn ct-btn--outline ct-btn--sm" [routerLink]="closeLink()">Go back</a>
+    </div>
+  }
+  @default {
+    <form class="screen" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="top">
+        <a
+          class="ct-icon-btn"
+          [routerLink]="closeLink()"
+          [attr.aria-label]="editing() ? 'Cancel editing' : 'Close'"
+        >
+          <svg
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </a>
+        <h1 class="aside">{{ editing() ? 'edit recipe' : 'new recipe' }}</h1>
+        <button class="ct-btn ct-btn--sm" type="submit" [disabled]="saving() || deleting()">
+          {{ saving() ? 'Saving…' : 'Save' }}
+        </button>
+      </div>
+
+      @if (error(); as message) {
+        <div class="ct-alert alert" role="alert">{{ message }}</div>
+      }
+
+      <div class="fields">
+        <div class="ct-field">
+          <label class="ct-label" for="rf-title">Recipe name</label>
+          <input
+            class="ct-input ct-input--display"
+            id="rf-title"
+            type="text"
+            placeholder="Grandma’s apple cake…"
+            [attr.maxlength]="limits.title"
+            formControlName="title"
+            [attr.aria-invalid]="!!titleError()"
+            [attr.aria-describedby]="titleError() ? 'rf-title-error' : null"
+          />
+          @if (titleError(); as message) {
+            <div class="ct-hint ct-hint--error" id="rf-title-error">{{ message }}</div>
+          }
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="rf-desc"
+            >Description <span class="ct-optional">(optional)</span></label
+          >
+          <textarea
+            class="ct-input"
+            id="rf-desc"
+            rows="2"
+            placeholder="A line or two about why it’s good."
+            [attr.maxlength]="limits.description"
+            formControlName="description"
+          ></textarea>
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="rf-tag">Tags</label>
+          <div class="tag-box">
+            @for (tag of tags(); track tag) {
+              <span class="tag-chip"
+                ><span><span aria-hidden="true">#</span>{{ tag }}</span
+                ><button
+                  type="button"
+                  class="tag-chip__remove"
+                  [attr.aria-label]="'Remove tag ' + tag"
+                  (click)="removeTag(tag)"
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.6"
+                    stroke-linecap="round"
+                  >
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg></button
+              ></span>
+            }
+            <input
+              class="tag-box__input"
+              id="rf-tag"
+              type="text"
+              placeholder="add a tag…"
+              autocapitalize="none"
+              enterkeyhint="done"
+              [attr.maxlength]="limits.tag"
+              [value]="tagDraft()"
+              aria-describedby="rf-tag-hint"
+              (input)="onTagInput($event)"
+              (keydown)="onTagKeydown($event)"
+              (blur)="finishTag()"
+            />
+          </div>
+          <div class="ct-hint" id="rf-tag-hint" [class.ct-hint--error]="!!tagError()">
+            {{ tagError() ?? 'Press Enter or type a comma after each tag.' }}
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">How long does it take?</h2>
+      <fieldset class="time">
+        <legend class="ct-sr-only">Total time (optional)</legend>
+        <svg
+          aria-hidden="true"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" />
+        </svg>
+        <input
+          class="time__input"
+          id="rf-hours"
+          type="text"
+          inputmode="numeric"
+          placeholder="1"
+          maxlength="3"
+          aria-label="Hours"
+          formControlName="hours"
+          [attr.aria-invalid]="!!timeError()"
+          [attr.aria-describedby]="timeError() ? 'rf-time-error' : null"
+        />
+        <span class="time__unit" aria-hidden="true">hr</span>
+        <input
+          class="time__input"
+          id="rf-minutes"
+          type="text"
+          inputmode="numeric"
+          [placeholder]="minutesPlaceholder()"
+          maxlength="4"
+          aria-label="Minutes"
+          formControlName="minutes"
+          [attr.aria-invalid]="!!timeError()"
+          [attr.aria-describedby]="timeError() ? 'rf-time-error' : null"
+        />
+        <span class="time__unit" aria-hidden="true">min</span>
+        <span class="time__total" aria-hidden="true">total</span>
+      </fieldset>
+      @if (timeError(); as message) {
+        <div class="ct-hint ct-hint--error below" id="rf-time-error">{{ message }}</div>
+      }
+
+      <div class="section-head">
+        <h2 class="section-title" id="rf-ing-title">Ingredients</h2>
+        <span class="count">{{ ingredients().length }} added</span>
+      </div>
+      <p class="ct-sr-only" id="rf-move-hint">
+        Drag to reorder, or use the up and down arrow keys.
+      </p>
+
+      @if (ingredients().length) {
+        <ul
+          class="ct-ingredients item-list"
+          aria-labelledby="rf-ing-title"
+          cdkDropList
+          cdkDropListLockAxis="y"
+          (cdkDropListDropped)="dropIngredient($event)"
+        >
+          @for (item of ingredients(); track item.key) {
+            <li class="item" cdkDrag>
+              <button
+                type="button"
+                class="handle"
+                cdkDragHandle
+                [id]="'rf-ing-handle-' + item.key"
+                [attr.aria-label]="'Move ' + item.value.ingredient"
+                aria-describedby="rf-move-hint"
+                (keydown.arrowup)="moveIngredient($event, $index, -1)"
+                (keydown.arrowdown)="moveIngredient($event, $index, 1)"
+              >
+                <svg
+                  aria-hidden="true"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <circle cx="8" cy="6" r="2" />
+                  <circle cx="16" cy="6" r="2" />
+                  <circle cx="8" cy="12" r="2" />
+                  <circle cx="16" cy="12" r="2" />
+                  <circle cx="8" cy="18" r="2" />
+                  <circle cx="16" cy="18" r="2" />
+                </svg>
+              </button>
+              @if (formatAmount(item.value); as amount) {
+                <span class="item__qty">{{ amount }}</span>
+              }
+              <span class="item__text"
+                >{{ item.value.ingredient
+                }}<span class="item__adj">{{
+                  item.value.adjective ? ', ' + item.value.adjective : ''
+                }}</span></span
+              >
+              <button
+                type="button"
+                class="remove"
+                [attr.aria-label]="'Remove ' + item.value.ingredient"
+                (click)="removeIngredient(item.key)"
+              >
+                <svg
+                  aria-hidden="true"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                >
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+      @if (ingredientsError(); as message) {
+        <div class="ct-hint ct-hint--error below" role="alert">{{ message }}</div>
+      }
+
+      <fieldset
+        class="ct-add-box add-ingredient"
+        [formGroup]="ingredientDraft"
+        (keydown.enter)="onIngredientEnter($event)"
+      >
+        <legend class="add-box__legend">Add an ingredient</legend>
+        <div class="pair">
+          <div class="ct-field">
+            <label class="small-label" for="rf-qty"
+              >Amount <span class="ct-optional">(optional)</span></label
+            >
+            <input
+              class="ct-input small-input"
+              id="rf-qty"
+              type="text"
+              inputmode="decimal"
+              placeholder="1½"
+              maxlength="12"
+              formControlName="quantity"
+            />
+          </div>
+          <div class="ct-field">
+            <label class="small-label" for="rf-unit"
+              >Unit <span class="ct-optional">(optional)</span></label
+            >
+            <div class="select-wrap">
+              <select
+                class="ct-input small-input unit-select"
+                id="rf-unit"
+                formControlName="unitChoice"
+                (change)="onUnitChange()"
+              >
+                <option value="">no unit</option>
+                @for (unit of unitOptions; track unit) {
+                  <option [value]="unit">{{ unit }}</option>
+                }
+                <option [value]="otherUnit">other…</option>
+              </select>
+              <svg
+                aria-hidden="true"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        @if (typingUnit()) {
+          <div class="ct-field">
+            <label class="small-label" for="rf-unit-other">Your unit</label>
+            <input
+              class="ct-input small-input"
+              id="rf-unit-other"
+              type="text"
+              placeholder="bunch, sprig, handful…"
+              autocapitalize="none"
+              [attr.maxlength]="limits.unit"
+              formControlName="unit"
+            />
+          </div>
+        }
+        <div class="ct-field">
+          <label class="small-label" for="rf-ing">Ingredient</label>
+          <input
+            class="ct-input small-input"
+            id="rf-ing"
+            type="text"
+            placeholder="flour"
+            [attr.maxlength]="limits.ingredient"
+            formControlName="ingredient"
+            [attr.aria-describedby]="ingredientError() ? 'rf-ing-error' : null"
+          />
+        </div>
+        <div class="ct-field">
+          <label class="small-label" for="rf-adj"
+            >Description <span class="ct-optional">(optional)</span></label
+          >
+          <input
+            class="ct-input small-input"
+            id="rf-adj"
+            type="text"
+            placeholder="sifted, chopped, room temp…"
+            [attr.maxlength]="limits.adjective"
+            formControlName="adjective"
+          />
+        </div>
+        @if (ingredientError(); as message) {
+          <div class="ct-hint ct-hint--error" id="rf-ing-error" role="alert">{{ message }}</div>
+        }
+        <button type="button" class="ct-btn ct-btn--soft add-button" (click)="addIngredient()">
+          + Add to list
+        </button>
+      </fieldset>
+
+      <div class="section-head">
+        <h2 class="section-title" id="rf-steps-title">Steps</h2>
+        <span class="count">keep each one short</span>
+      </div>
+      <ol
+        class="step-list"
+        aria-labelledby="rf-steps-title"
+        cdkDropList
+        cdkDropListLockAxis="y"
+        (cdkDropListDropped)="dropStep($event)"
+      >
+        @for (step of steps(); track step.key) {
+          <li class="ct-step step" cdkDrag>
+            <span class="ct-step__num" aria-hidden="true">{{ $index + 1 }}</span>
+            <label class="ct-sr-only" [for]="'rf-step-' + step.key">Step {{ $index + 1 }}</label>
+            <textarea
+              class="step__text"
+              rows="1"
+              [id]="'rf-step-' + step.key"
+              [attr.maxlength]="limits.step"
+              [value]="step.value"
+              (input)="editStep(step.key, $event)"
+            ></textarea>
+            <div class="step__tools">
+              <button
+                type="button"
+                class="handle"
+                cdkDragHandle
+                [id]="'rf-step-handle-' + step.key"
+                [attr.aria-label]="'Move step ' + ($index + 1)"
+                aria-describedby="rf-move-hint"
+                (keydown.arrowup)="moveStep($event, $index, -1)"
+                (keydown.arrowdown)="moveStep($event, $index, 1)"
+              >
+                <svg
+                  aria-hidden="true"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <circle cx="8" cy="6" r="2" />
+                  <circle cx="16" cy="6" r="2" />
+                  <circle cx="8" cy="12" r="2" />
+                  <circle cx="16" cy="12" r="2" />
+                  <circle cx="8" cy="18" r="2" />
+                  <circle cx="16" cy="18" r="2" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="remove"
+                [attr.aria-label]="'Remove step ' + ($index + 1)"
+                (click)="removeStep(step.key)"
+              >
+                <svg
+                  aria-hidden="true"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                >
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+          </li>
+        }
+      </ol>
+      @if (stepsError(); as message) {
+        <div class="ct-hint ct-hint--error below" role="alert">{{ message }}</div>
+      }
+      <div class="ct-add-box add-step">
+        <span class="ct-step__num add-step__num" aria-hidden="true">{{ steps().length + 1 }}</span>
+        <div class="add-step__body">
+          <label class="ct-sr-only" for="rf-step">Step {{ steps().length + 1 }}</label>
+          <textarea
+            class="ct-input"
+            id="rf-step"
+            rows="3"
+            placeholder="What happens next?"
+            [attr.maxlength]="limits.step"
+            [formControl]="stepDraft"
+          ></textarea>
+          <button type="button" class="ct-btn ct-btn--soft add-button" (click)="addStep()">
+            + Add step
+          </button>
+        </div>
+      </div>
+
+      <div class="save">
+        <button class="ct-btn ct-btn--block" type="submit" [disabled]="saving() || deleting()">
+          {{ saving() ? 'Saving…' : 'Save recipe' }}
+        </button>
+      </div>
+
+      @if (editing()) {
+        <div class="danger">
+          @if (confirmingDelete()) {
+            <div class="confirm" role="group" aria-labelledby="rf-delete-title">
+              <p class="confirm__title" id="rf-delete-title">Delete this recipe?</p>
+              <p class="confirm__body">
+                It’ll be gone from your cookbook, along with its journal entries. You can’t undo
+                this yet.
+              </p>
+              @if (deleteError(); as message) {
+                <div class="ct-alert" role="alert">{{ message }}</div>
+              }
+              <div class="confirm__actions">
+                <button
+                  #keepButton
+                  type="button"
+                  class="ct-btn ct-btn--outline ct-btn--sm"
+                  [disabled]="deleting()"
+                  (click)="keepRecipe()"
+                >
+                  Keep it
+                </button>
+                <button
+                  type="button"
+                  class="ct-btn ct-btn--sm confirm__danger"
+                  [disabled]="deleting()"
+                  (click)="deleteRecipe()"
+                >
+                  {{ deleting() ? 'Deleting…' : 'Delete' }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button
+              #deleteButton
+              type="button"
+              class="delete"
+              [disabled]="saving()"
+              (click)="askToDelete()"
+            >
+              Delete recipe
+            </button>
+          }
+        </div>
+      }
+
+      <p class="ct-sr-only" aria-live="polite">{{ announcement() }}</p>
+    </form>
+  }
+}

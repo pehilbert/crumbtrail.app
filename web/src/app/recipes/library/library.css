@@ -1,0 +1,232 @@
+.screen {
+  max-width: 1280px;
+  margin: 0 auto;
+  /* Room to scroll clear of the floating tab bar. */
+  padding: var(--space-6) 0 calc(120px + env(safe-area-inset-bottom));
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: 0 var(--space-4);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0 var(--space-1);
+}
+
+.greeting {
+  font: italic 500 17px/1.3 var(--font-display);
+  color: var(--cocoa-muted);
+}
+
+/* The mockup's mobile greeting stops at "good evening,"; the name joins it on desktop. */
+.greeting__name {
+  display: none;
+}
+
+.title {
+  max-width: 11ch;
+  font: 700 34px/1.05 var(--font-display);
+  letter-spacing: -0.5px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: var(--input-height);
+  padding: 0 18px;
+  background: var(--paper);
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--cocoa-muted);
+}
+
+.search:focus-within {
+  border-color: var(--cocoa);
+}
+
+.search input {
+  flex-grow: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--cocoa);
+}
+
+.search input::placeholder {
+  color: var(--cocoa-faint);
+}
+
+.filters {
+  display: flex;
+  gap: var(--space-2);
+  padding: 14px var(--space-4) 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filters .ct-filter {
+  flex-shrink: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 18px var(--space-4) 0;
+  list-style: none;
+}
+
+.card {
+  height: 100%;
+  border-radius: var(--radius-lg);
+}
+
+.card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card__title {
+  overflow-wrap: anywhere;
+}
+
+.card__meta {
+  display: none;
+}
+
+.message {
+  margin: var(--space-6) var(--space-5) 0;
+  color: var(--cocoa-muted);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: var(--space-8) var(--space-5) 0;
+}
+
+.empty .message {
+  margin: 0;
+}
+
+.empty__title {
+  font: 700 22px/1.2 var(--font-display);
+}
+
+@media (min-width: 768px) {
+  .screen {
+    padding: 48px var(--space-8) 80px;
+  }
+
+  .intro {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: 0;
+  }
+
+  .heading {
+    gap: 6px;
+    padding: 0;
+  }
+
+  .greeting {
+    font-size: 20px;
+  }
+
+  .greeting__name {
+    display: inline;
+  }
+
+  .title {
+    max-width: none;
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .search {
+    flex: 0 1 380px;
+    border-color: var(--line);
+  }
+
+  .filters {
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .filters .ct-filter {
+    padding: 0 18px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+    padding: 0;
+  }
+
+  .card {
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3) 18px;
+    background: var(--paper);
+    border-radius: 28px;
+  }
+
+  .card__tile {
+    height: 170px;
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .card__mono {
+    right: 6px;
+    top: -18px;
+    font-size: 130px;
+  }
+
+  .card__time {
+    padding: 5px var(--space-3);
+    font-size: 13px;
+  }
+
+  .card__text {
+    padding: 0 6px;
+  }
+
+  .card__title {
+    padding: 0;
+    font-size: 20px;
+  }
+
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 6px;
+    font-size: 14px;
+    color: var(--cocoa-muted);
+  }
+
+  .message,
+  .empty {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
