@@ -1,0 +1,24 @@
+Recipe (Collection):
+ID: Guid (string, stored as Mongo _id)
+AuthorId: User.ID (set from the auth token on create, never changes)
+PublishedAt: Timestamp (set on create)
+EditedAt: Timestamp (null until the first edit)
+Title: string
+Description: string (optional, null if absent)
+Tags: string[] (stored lowercase, no duplicates)
+TimeEstimateMinutes: integer, whole minutes (optional, null if absent)
+Ingredients: Ingredient[]
+Steps: string[] (sequential paragraphs)
+Archived: bool (default false)
+
+Ingredient (Sub-Entity):
+Quantity: double (optional, positive; fractions stored as decimals; null for things like "salt, to taste")
+Unit: string (optional, null for things like "2 eggs")
+Ingredient: string
+Adjective: string (optional, null if absent)
+
+Notes:
+- Deleting a recipe archives it (soft delete, Archived = true). Archived recipes and their
+  journal entries return 404 to everyone, the author included. Un-archiving is later functionality.
+- Recipes whose author is deactivated are hidden the same way (404), like the author's profile.
+- Adding or changing journal entries does not change the recipe's EditedAt.

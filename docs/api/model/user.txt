@@ -1,0 +1,19 @@
+User (Collection):
+ID: Guid (string, stored as Mongo _id)
+Username: string (unique, case-insensitive)
+Password (stored hashed): string
+Email: string (unique, stored lowercase)
+FirstName: string
+LastName: string
+Pronouns: string (optional)
+JoinDate: Timestamp
+UpdatedAt: Timestamp
+Active: bool
+
+Deferred to Phase 1:
+Avatar: profile picture (planned as a URL to a stored file, uploaded through its own endpoint)
+
+Notes:
+- Deactivated (Active = false) users keep their username and email reserved.
+- Deactivated users cannot log in, existing tokens stop working (access tokens are rejected and
+  refresh tokens are deleted, see refresh_token.txt), and their profile returns 404.

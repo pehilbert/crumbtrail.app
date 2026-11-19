@@ -1,0 +1,78 @@
+.screen {
+  display: block;
+  max-width: 560px;
+  margin: 0 auto;
+  padding-bottom: var(--space-10);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) 0;
+}
+
+.cancel {
+  background: var(--cream-200);
+  border-color: var(--cream-200);
+  color: var(--cocoa);
+  padding: 0 var(--space-4);
+}
+
+.aside {
+  font: italic 500 18px var(--font-display);
+  color: var(--cocoa-muted);
+}
+
+.title {
+  margin: var(--space-6) var(--space-6) 0;
+  font: 700 32px/1.05 var(--font-display);
+  letter-spacing: -0.5px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: var(--space-5) var(--space-6) 0;
+}
+
+.names {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.names .ct-input {
+  padding: 0 var(--space-4);
+}
+
+.locked {
+  height: var(--input-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  background: var(--cream-200);
+  color: var(--cocoa);
+}
+
+.locked span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.locked svg {
+  flex-shrink: 0;
+  color: var(--cocoa-muted);
+}
+
+@media (min-width: 768px) {
+  .screen {
+    padding-top: var(--space-6);
+  }
+}
