@@ -33,24 +33,47 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./profile/edit-profile/edit-profile').then((m) => m.EditProfile),
       },
-      // Not built yet.
       {
         path: 'recipes',
         title: 'My recipes · crumbtrail',
-        data: { title: 'My recipes' },
-        loadComponent: () => import('./shell/coming-soon').then((m) => m.ComingSoon),
+        loadComponent: () => import('./recipes/library/library').then((m) => m.Library),
       },
       {
         path: 'recipes/new',
         title: 'New recipe · crumbtrail',
-        data: { title: 'New recipe' },
-        loadComponent: () => import('./shell/coming-soon').then((m) => m.ComingSoon),
+        data: { hideTabBar: true },
+        loadComponent: () => import('./recipes/recipe-form/recipe-form').then((m) => m.RecipeForm),
+      },
+      {
+        path: 'recipes/:id',
+        title: 'Recipe · crumbtrail',
+        loadComponent: () => import('./recipes/recipe-view/recipe-view').then((m) => m.RecipeView),
+      },
+      {
+        path: 'recipes/:id/edit',
+        title: 'Edit recipe · crumbtrail',
+        data: { hideTabBar: true },
+        loadComponent: () => import('./recipes/recipe-form/recipe-form').then((m) => m.RecipeForm),
+      },
+      {
+        path: 'recipes/:id/journal/new',
+        title: 'New journal entry · crumbtrail',
+        data: { hideTabBar: true },
+        loadComponent: () =>
+          import('./journals/journal-form/journal-form').then((m) => m.JournalForm),
+      },
+      {
+        path: 'recipes/:id/journal/:entryId/edit',
+        title: 'Edit journal entry · crumbtrail',
+        data: { hideTabBar: true },
+        loadComponent: () =>
+          import('./journals/journal-form/journal-form').then((m) => m.JournalForm),
       },
       {
         path: 'journal',
         title: 'Journal · crumbtrail',
-        data: { title: 'Journal' },
-        loadComponent: () => import('./shell/coming-soon').then((m) => m.ComingSoon),
+        loadComponent: () =>
+          import('./journals/journal-picker/journal-picker').then((m) => m.JournalPicker),
       },
     ],
   },

@@ -113,10 +113,14 @@
   overflow-x: auto;
 }
 
-.recent__card {
+.recent__item {
   width: 108px;
   flex-shrink: 0;
+}
+
+.recent__card {
   gap: 6px;
+  border-radius: 20px;
 }
 
 .recent__tile {

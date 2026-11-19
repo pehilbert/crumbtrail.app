@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 /** The page to show after logging in. */
-export const HOME_URL = '/profile';
+export const HOME_URL = '/recipes';
 
 /** Lets signed-in users through; sends everyone else to the login screen. */
 export const signedInGuard: CanActivateFn = async (_route, state) => {

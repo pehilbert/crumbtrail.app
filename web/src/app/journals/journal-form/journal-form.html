@@ -1,0 +1,144 @@
+@switch (loadState()) {
+  @case ('loading') {
+    <div class="screen">
+      <p class="message">Getting the recipe…</p>
+    </div>
+  }
+  @case ('missing') {
+    <div class="screen message-block">
+      <h1 class="message-block__title">
+        {{ editing() ? 'We couldn’t find that entry.' : 'We couldn’t find that recipe.' }}
+      </h1>
+      <p class="message">It may have been deleted, or the link is off.</p>
+      <a class="ct-btn ct-btn--outline ct-btn--sm" routerLink="/recipes">Back to my recipes</a>
+    </div>
+  }
+  @case ('forbidden') {
+    <div class="screen message-block">
+      <h1 class="message-block__title">This isn’t your recipe.</h1>
+      <p class="message">You can only keep a journal for recipes you saved.</p>
+      <a class="ct-btn ct-btn--outline ct-btn--sm" [routerLink]="['/recipes', id()]"
+        >Back to the recipe</a
+      >
+    </div>
+  }
+  @case ('error') {
+    <div class="screen message-block">
+      <p class="message" role="alert">This recipe didn’t load. Try again in a bit.</p>
+      <a class="ct-btn ct-btn--outline ct-btn--sm" [routerLink]="['/recipes', id()]">Go back</a>
+    </div>
+  }
+  @case ('ready') {
+    <form class="screen" (submit)="onSubmit($event)" novalidate>
+      <div class="top">
+        <a
+          class="ct-icon-btn"
+          [routerLink]="['/recipes', id()]"
+          [attr.aria-label]="editing() ? 'Cancel editing' : 'Close'"
+        >
+          <svg
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </a>
+        <span class="aside" aria-hidden="true">journal</span>
+        <span class="spacer" aria-hidden="true"></span>
+      </div>
+
+      <div class="intro">
+        <h1 class="title">{{ editing() ? 'Change your notes' : 'How did it go?' }}</h1>
+        <p class="context">
+          <span class="swatch" [style.background]="swatch()" aria-hidden="true"></span>
+          {{ recipe()!.title }} · {{ when() }}
+        </p>
+      </div>
+
+      @if (error(); as message) {
+        <div class="ct-alert alert" role="alert">{{ message }}</div>
+      }
+
+      <div class="note-wrap">
+        <div class="ct-note note">
+          <label class="note__label" for="je-note">Notes &amp; learnings</label>
+          <textarea
+            #note
+            class="note__text"
+            id="je-note"
+            rows="10"
+            placeholder="What worked? What would you change next time?"
+            [attr.maxlength]="maxLength"
+            [formControl]="content"
+            [attr.aria-invalid]="!!contentError()"
+            [attr.aria-describedby]="contentError() ? 'je-note-error' : null"
+          ></textarea>
+        </div>
+        @if (contentError(); as message) {
+          <div class="ct-hint ct-hint--error note-error" id="je-note-error">{{ message }}</div>
+        }
+      </div>
+
+      <div class="actions">
+        <button class="ct-btn ct-btn--block" type="submit" [disabled]="saving() || deleting()">
+          @if (saving()) {
+            Saving…
+          } @else if (editing()) {
+            Save changes
+          } @else {
+            Stick it to the recipe
+          }
+        </button>
+
+        @if (editing()) {
+          <div class="danger">
+            @if (confirmingDelete()) {
+              <div class="confirm" role="group" aria-labelledby="je-delete-title">
+                <p class="confirm__title" id="je-delete-title">Delete this entry?</p>
+                <p class="confirm__body">It’ll be gone for good. You can’t undo this.</p>
+                @if (deleteError(); as message) {
+                  <div class="ct-alert" role="alert">{{ message }}</div>
+                }
+                <div class="confirm__actions">
+                  <button
+                    #keepButton
+                    type="button"
+                    class="ct-btn ct-btn--outline ct-btn--sm"
+                    [disabled]="deleting()"
+                    (click)="keepEntry()"
+                  >
+                    Keep it
+                  </button>
+                  <button
+                    type="button"
+                    class="ct-btn ct-btn--sm confirm__danger"
+                    [disabled]="deleting()"
+                    (click)="deleteEntry()"
+                  >
+                    {{ deleting() ? 'Deleting…' : 'Delete' }}
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <button
+                #deleteButton
+                type="button"
+                class="delete"
+                [disabled]="saving()"
+                (click)="askToDelete()"
+              >
+                Delete entry
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </form>
+  }
+}

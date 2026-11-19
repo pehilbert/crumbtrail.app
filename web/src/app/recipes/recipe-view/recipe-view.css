@@ -1,0 +1,517 @@
+.screen {
+  max-width: 1280px;
+  margin: 0 auto;
+  /* Room to scroll clear of the floating tab bar. */
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Top row: a round back button and the edit button on mobile; a text back link on desktop. */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-4) var(--space-2);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  border-radius: var(--radius-pill);
+  background: var(--cream-200);
+  color: var(--cocoa);
+  text-decoration: none;
+}
+
+.back__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.aside {
+  font: italic 500 18px var(--font-display);
+  color: var(--cocoa-muted);
+}
+
+.edit-icon {
+  width: var(--tap-target);
+  height: var(--tap-target);
+  text-decoration: none;
+}
+
+.message {
+  margin: var(--space-6) var(--space-5) 0;
+  color: var(--cocoa-muted);
+}
+
+.message-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: var(--space-6) var(--space-5) 0;
+}
+
+.message-block .message {
+  margin: 0;
+}
+
+.message-block__title {
+  font: 700 28px/1.1 var(--font-display);
+}
+
+/* Hero: the cover tile, then the title and details. */
+.tile {
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+  margin: var(--space-2) var(--space-4) 0;
+  padding: var(--space-6);
+  display: flex;
+  align-items: flex-end;
+  border-radius: var(--radius-xl);
+  background: var(--accent);
+}
+
+.tile__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tile__trail {
+  stroke: var(--cocoa);
+  opacity: 0.35;
+}
+
+.tile__crumb {
+  fill: var(--butter-deep);
+}
+
+.tile__dot {
+  fill: var(--cocoa);
+}
+
+/* The small crumbs sit behind the tags on the narrow mobile tile. */
+.tile__crumb--small {
+  display: none;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tags--tile {
+  position: relative;
+}
+
+/* Tags read as hashtags in the body font, rather than the design system's italic serif. */
+.tag {
+  font: 800 14px var(--font-body);
+}
+
+.tags--tile .ct-tag {
+  background: var(--cream-100);
+}
+
+.tags--details {
+  display: none;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5) 0;
+}
+
+.title {
+  font: 700 34px/1.05 var(--font-display);
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.byline {
+  font-size: 15px;
+  color: var(--cocoa-muted);
+}
+
+.byline__author {
+  color: var(--cocoa);
+  font-weight: 700;
+}
+
+.description {
+  margin-top: var(--space-1);
+  font-size: 16px;
+  line-height: 1.55;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: 6px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--cream-200);
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.chip__time {
+  font: 700 17px var(--font-display);
+}
+
+.chip--desktop {
+  display: none;
+}
+
+.actions {
+  display: none;
+}
+
+/* Ingredients and steps */
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.section-head--center {
+  align-items: center;
+}
+
+.section-title {
+  font: 700 24px/1.2 var(--font-display);
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--cocoa-muted);
+}
+
+.hint--pointer {
+  display: none;
+}
+
+@media (pointer: fine) {
+  .hint--touch {
+    display: none;
+  }
+
+  .hint--pointer {
+    display: inline;
+  }
+}
+
+.ingredients,
+.steps,
+.journal {
+  padding: var(--space-8) var(--space-4) 0;
+}
+
+.section-head,
+.steps > .section-title {
+  padding: 0 var(--space-1);
+}
+
+.ingredient-list {
+  margin-top: var(--space-3);
+}
+
+.ingredient-list span {
+  overflow-wrap: anywhere;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: var(--space-3);
+}
+
+.step__num {
+  background: var(--accent);
+}
+
+.step__body {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* Journal: sticky notes, staggered left and right on mobile. */
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: var(--space-6) 6px 0;
+}
+
+.note {
+  width: min(300px, 100%);
+}
+
+.note:nth-child(even) {
+  align-self: flex-end;
+}
+
+.note__body {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* A 44px tap target that doesn't make the small meta row taller. */
+.note__edit {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  margin: -14px -10px -14px 0;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  /* Cocoa, not tomato: tomato falls under 4.5:1 on the blush note. */
+  color: var(--cocoa);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.note .ct-note__meta {
+  align-items: center;
+}
+
+.journal .message {
+  margin: var(--space-3) var(--space-1) 0;
+}
+
+@media (min-width: 768px) {
+  .screen {
+    padding: 28px var(--space-8) 96px;
+  }
+
+  .top {
+    padding: 0;
+  }
+
+  .back {
+    width: auto;
+    min-height: var(--tap-target);
+    gap: 6px;
+    background: none;
+    color: var(--cocoa-muted);
+    font-weight: 800;
+    font-size: 15px;
+  }
+
+  .back__label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+  }
+
+  .aside,
+  .edit-icon {
+    display: none;
+  }
+
+  .message,
+  .message-block {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-10);
+    margin-top: var(--space-3);
+  }
+
+  .tile {
+    flex: 1 1 420px;
+    min-width: 0;
+    height: 360px;
+    margin: 0;
+    border-radius: 40px;
+  }
+
+  .tags--tile {
+    display: none;
+  }
+
+  .tile__crumb--small {
+    display: inline;
+  }
+
+  .tags--details {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .details {
+    flex: 1 1 460px;
+    min-width: 0;
+    gap: var(--space-4);
+    padding: 0;
+  }
+
+  .title {
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -1.2px;
+  }
+
+  .byline {
+    font-size: 16px;
+  }
+
+  .description {
+    max-width: 520px;
+    margin-top: 0;
+    font-size: 18px;
+  }
+
+  .chips {
+    gap: 10px;
+    margin-top: var(--space-1);
+  }
+
+  .chip {
+    padding: 10px 18px;
+  }
+
+  .chip__time {
+    font-size: 18px;
+  }
+
+  .chip--desktop {
+    display: flex;
+  }
+
+  .chip--mobile {
+    display: none;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: var(--space-2);
+  }
+
+  .body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-10);
+    margin-top: 56px;
+  }
+
+  .ingredients,
+  .steps,
+  .journal {
+    padding: 0;
+  }
+
+  .section-head,
+  .steps > .section-title {
+    padding: 0;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .ingredients {
+    flex: 1 1 340px;
+    min-width: 0;
+    padding: 28px 28px var(--space-4);
+    background: var(--paper);
+    border-radius: var(--radius-xl);
+  }
+
+  .ingredient-list {
+    padding: 0;
+  }
+
+  .steps {
+    flex: 999 1 560px;
+    min-width: 0;
+  }
+
+  .step-list {
+    gap: 14px;
+  }
+
+  .step {
+    gap: var(--space-5);
+    padding: 22px 26px;
+    border-radius: 28px;
+  }
+
+  .step__num {
+    width: var(--tap-target);
+    height: var(--tap-target);
+    font-size: 22px;
+  }
+
+  .step__body {
+    max-width: 640px;
+    padding-top: 7px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .journal {
+    margin-top: 64px;
+  }
+
+  .notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 36px var(--space-8);
+    margin-top: var(--space-3);
+    padding: var(--space-6) var(--space-2) 0;
+  }
+
+  .note {
+    width: auto;
+    padding: 30px 22px 22px;
+  }
+
+  .note__body {
+    font-size: 19px;
+    line-height: 1.45;
+  }
+
+  .journal .message {
+    margin: var(--space-3) 0 0;
+  }
+}

@@ -14,6 +14,12 @@
   margin: 0 auto;
 }
 
+/* The design system styles aria-current="page"; inside a recipe, the Recipes tab is "true". */
+.tabbar a[aria-current='true'] {
+  background: var(--butter);
+  color: var(--cocoa);
+}
+
 /* The design system's focus rule targets .ct-tabbar a, but ring it on cocoa clearly too. */
 .tabbar a:focus-visible {
   outline-color: var(--butter);
